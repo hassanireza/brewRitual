@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Your Cart - Brew Ritual{% endblock %}
+{% block content %}
+<div class="cart-page">
+  <p class="section-eyebrow">Your Selection</p>
+  <h1 style="font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--espresso);margin-bottom:0.5rem">Your Cart</h1>
+  <p style="color:var(--text-light);font-size:0.9rem;margin-bottom:2rem">{{ cart.get_item_count }} item{{ cart.get_item_count|pluralize }} selected</p>
+  {% if cart.items.all %}
+  <div class="cart-layout">
+    <div>
+      {% for item in cart.items.all %}
+      <div class="cart-item">
+        <div class="cart-item-art">
+          <svg width="42" height="42" viewBox="0 0 50 50" fill="none"><path d="M12 30 L14 42 Q14 44 16 44 L34 44 Q36 44 36 42 L38 30 Z" fill="#C8954A" opacity="0.8"/><path d="M11 28 Q11 27 12 27 L38 27 Q39 27 39 28 L39 30 L11 30 Z" fill="#E8C17A"/><path d="M38 31 Q43 31 43 34 Q43 37 38 36" stroke="#C8954A" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 24 Q21 20 20 16" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="steam-path" opacity="0.7"/><path d="M25 25 Q26 21 25 17" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="steam-path" style="animation-delay:.3s" opacity="0.7"/><path d="M30 24 Q31 20 30 16" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="steam-path" style="animation-delay:.6s" opacity="0.7"/></svg>
+        </div>
+        <div>
+          <p class="cart-item-name">{{ item.menu_item.name }}</p>
+          <p class="cart-item-meta">{{ item.get_size_display }} &nbsp;|&nbsp; ${{ item.get_unit_price }}</p>
+          {% if item.special_instructions %}
+          <p style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.75rem;font-style:italic">"{{ item.special_instructions }}"</p>
+          {% endif %}
+          <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+            <form method="post" action="{% url 'orders:update_cart' item.pk %}" style="display:flex;align-items:center;gap:0.5rem">
+              {% csrf_token %}
+              <div class="qty-control">
+                <button type="button" class="qty-btn" data-qty-minus>-</button>
+                <span class="qty-val">{{ item.quantity }}</span>
+                <button type="button" class="qty-btn" data-qty-plus>+</button>
+              </div>
+              <input type="hidden" name="quantity" value="{{ item.quantity }}">
+              <button type="submit" class="btn btn-sm btn-outline" style="margin-left:0.5rem">Update</button>
+            </form>
+            <form method="post" action="{% url 'orders:remove_from_cart' item.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+            </form>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <p style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--espresso);font-weight:600">${{ item.get_subtotal }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="cart-summary">
+      <p style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--espresso);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">Order Summary</p>
+      {% for item in cart.items.all %}
+      <div class="summary-row">
+        <span>{{ item.menu_item.name }} x{{ item.quantity }}</span>
+        <span>${{ item.get_subtotal }}</span>
+      </div>
+      {% endfor %}
+      <div class="summary-row total">
+        <span>Total</span>
+        <span>${{ cart.get_total }}</span>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.75rem">
+        {% if user.is_authenticated %}
+        <a href="{% url 'orders:checkout' %}" class="btn btn-primary" style="width:100%;justify-content:center">Proceed to Checkout</a>
+        {% else %}
+        <a href="{% url 'accounts:login' %}?next={% url 'orders:checkout' %}" class="btn btn-primary" style="width:100%;justify-content:center">Sign In to Checkout</a>
+        {% endif %}
+        <a href="{% url 'menu:list' %}" class="btn btn-outline" style="width:100%;justify-content:center">Continue Browsing</a>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" style="margin:0 auto 1.5rem"><path d="M16 32 L19 50 Q19 52 21 52 L43 52 Q45 52 45 50 L48 32 Z" fill="#C8954A" opacity="0.2"/><path d="M15 30 Q15 28 17 28 L47 28 Q49 28 49 30 L49 32 L15 32 Z" fill="#C8954A" opacity="0.3"/></svg>
+    <h3>Your cart is empty</h3>
+    <p style="margin-bottom:2rem">Every great ritual starts with a choice. Browse our menu and find yours.</p>
+    <a href="{% url 'menu:list' %}" class="btn btn-primary">Explore the Menu</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

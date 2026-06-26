@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Menu - Brew Ritual{% endblock %}
+{% block content %}
+<div class="menu-page">
+  <div class="page-header">
+    <p class="page-header-eyebrow">Our Offerings</p>
+    <h1>The Menu</h1>
+    <p>Every item is crafted with intention. Choose your ritual.</p>
+  </div>
+  <div class="menu-filter-bar">
+    <div class="menu-filter-inner">
+      <a href="{% url 'menu:list' %}" class="filter-btn {% if not selected_category %}active{% endif %}">All</a>
+      {% for cat in all_categories %}
+      <a href="{% url 'menu:list' %}?category={{ cat.slug }}" class="filter-btn {% if selected_category == cat.slug %}active{% endif %}">{{ cat.name }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% for category in categories %}
+  {% if category.items.all %}
+  <div class="menu-section" id="{{ category.slug }}">
+    <p class="section-eyebrow">{{ category.name }}</p>
+    <h2 class="category-title">{{ category.name }}</h2>
+    {% if category.description %}<p class="category-desc">{{ category.description }}</p>{% endif %}
+    <div class="menu-grid">
+      {% for item in category.items.all %}
+      {% if item.is_available %}
+      <a href="{% url 'menu:detail' item.slug %}" class="item-card reveal" style="text-decoration:none;transition-delay:{{ forloop.counter0 }}00ms">
+        <div class="item-card-art">
+          {% if item.illustration_svg %}{{ item.illustration_svg|safe }}
+          {% else %}
+          <svg width="90" height="90" viewBox="0 0 90 90" fill="none"><ellipse cx="45" cy="52" rx="22" ry="14" fill="#C8954A" opacity="0.2"/><path d="M28 52 L31 68 Q31 70 33 70 L57 70 Q59 70 59 68 L62 52 Z" fill="#C8954A" opacity="0.85"/><path d="M27 50 Q27 48 29 48 L61 48 Q63 48 63 50 L63 52 L27 52 Z" fill="#E8C17A"/><path d="M62 54 Q68 54 68 58 Q68 62 62 61" stroke="#C8954A" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M36 43 Q38 37 36 31" stroke="#EDD9B8" stroke-width="1.5" fill="none" stroke-linecap="round" class="steam-path"/><path d="M45 44 Q47 38 45 32" stroke="#EDD9B8" stroke-width="1.5" fill="none" stroke-linecap="round" class="steam-path" style="animation-delay:.3s"/><path d="M54 43 Q56 37 54 31" stroke="#EDD9B8" stroke-width="1.5" fill="none" stroke-linecap="round" class="steam-path" style="animation-delay:.6s"/></svg>
+          {% endif %}
+        </div>
+        <div class="item-card-body">
+          <p class="item-card-category">{{ item.category.name }}</p>
+          <h3 class="item-card-name">{{ item.name }}</h3>
+          <p class="item-card-tagline">{{ item.tagline|default:item.description|truncatechars:75 }}</p>
+          <div class="item-card-footer">
+            <span class="item-card-price">${{ item.price }} {% if item.has_sizes %}<span>from</span>{% endif %}</span>
+            <span class="btn btn-sm btn-primary">Order</span>
+          </div>
+        </div>
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}

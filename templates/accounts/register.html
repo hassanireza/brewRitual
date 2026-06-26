@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Join Brew Ritual{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card fade-up" style="max-width:480px">
+    <div class="auth-brand">
+      <svg width="40" height="40" viewBox="0 0 52 52" fill="none" style="margin:0 auto 1rem"><path d="M10 32 L14 46 Q14 48 16 48 L36 48 Q38 48 38 46 L42 32 Z" fill="#C8954A" opacity="0.9"/><path d="M8 30 Q8 28 10 28 L42 28 Q44 28 44 30 L44 32 L8 32 Z" fill="#E8C17A"/><path d="M42 34 Q50 34 50 40 Q50 46 42 44" stroke="#C8954A" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M20 22 Q22 16 20 10" stroke="#EDD9B8" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6" class="steam-path"/><path d="M26 24 Q28 18 26 12" stroke="#EDD9B8" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6" class="steam-path" style="animation-delay:.3s"/><path d="M32 22 Q34 16 32 10" stroke="#EDD9B8" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6" class="steam-path" style="animation-delay:.6s"/></svg>
+      <h1 class="auth-title">Begin your ritual.</h1>
+      <p class="auth-subtitle">Join a community who takes their cup seriously. Earn rewards from day one.</p>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group">
+          <label class="form-label" style="color:rgba(245,237,216,0.55)">First Name</label>
+          <input type="text" name="first_name" class="form-control dark-bg" placeholder="Your name" value="{{ first_name|default:'' }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label" style="color:rgba(245,237,216,0.55)">Username</label>
+          <input type="text" name="username" class="form-control dark-bg" placeholder="@handle" value="{{ username|default:'' }}" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="color:rgba(245,237,216,0.55)">Email</label>
+        <input type="email" name="email" class="form-control dark-bg" placeholder="you@example.com" value="{{ email|default:'' }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="color:rgba(245,237,216,0.55)">Password</label>
+        <input type="password" name="password1" class="form-control dark-bg" placeholder="Min. 8 characters" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="color:rgba(245,237,216,0.55)">Confirm Password</label>
+        <input type="password" name="password2" class="form-control dark-bg" placeholder="Repeat your password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem">Create Account</button>
+    </form>
+    <p style="font-size:0.75rem;color:rgba(245,237,216,0.35);text-align:center;margin-top:1rem;line-height:1.6">By creating an account you receive 20 welcome bonus points and begin your loyalty journey.</p>
+    <div class="auth-footer">Already a member? <a href="{% url 'accounts:login' %}">Sign in</a></div>
+  </div>
+</div>
+{% endblock %}

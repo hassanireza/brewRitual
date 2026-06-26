@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Ritual Rewards - Brew Ritual{% endblock %}
+{% block content %}
+<div class="loyalty-page">
+  <div class="loyalty-hero">
+    <div class="loyalty-hero-content">
+      <p class="loyalty-tier-name" style="color:{% if profile.tier == 'gold' %}var(--crema){% elif profile.tier == 'silver' %}#b8b8b8{% elif profile.tier == 'platinum' %}#c8a8ff{% else %}var(--dusty-rose){% endif %}">
+        {{ profile.get_tier_display }}
+      </p>
+      <h1 class="loyalty-user-name">{{ request.user.get_full_name|default:request.user.username }}</h1>
+      <div class="loyalty-points-display">
+        <span class="points-big">{{ profile.total_points }}</span>
+        <span class="points-label">points available</span>
+      </div>
+      <p style="font-size:0.85rem;color:var(--milk);opacity:0.6;margin-bottom:1.5rem">{{ profile.lifetime_points }} lifetime points earned</p>
+      {% if profile.free_drinks_available %}
+      <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(200,149,74,0.15);border:1px solid var(--border-gold);border-radius:var(--radius-pill);padding:0.5rem 1.25rem;font-size:0.875rem;color:var(--milk)">
+        <span style="font-size:1rem">🎁</span>
+        {{ profile.free_drinks_available }} free drink{{ profile.free_drinks_available|pluralize }} ready to redeem
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- STAMP CARD -->
+  <div class="stamp-card">
+    <div class="stamp-card-header">
+      <div>
+        <p class="stamp-card-title">Your Stamp Card</p>
+        <p class="stamp-card-subtitle">Collect {{ stamps_per_free }} stamps, unlock one free drink. Every eligible drink earns a stamp.</p>
+      </div>
+      <div style="text-align:right">
+        <p style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--crema);font-weight:600">{{ profile.stamps }}/{{ stamps_per_free }}</p>
+        <p style="font-family:'DM Mono',monospace;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-light)">{{ profile.stamps_remaining }} to go</p>
+      </div>
+    </div>
+    <div class="stamps-grid">
+      {% for i in stamp_range %}
+      <div class="stamp {% if forloop.counter0 < filled_stamps %}filled{% else %}empty{% endif %}">
+        {% if forloop.counter0 < filled_stamps %}
+        <svg viewBox="0 0 22 22" fill="none"><path d="M4 11l5 5 9-9" stroke="#1C0F0A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        {% else %}
+        <svg viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="4" stroke="rgba(92,61,40,0.25)" stroke-width="1.5"/></svg>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" data-pct="{{ profile.stamps_progress_pct }}" style="width:0%"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:0.75rem">
+      <p style="font-size:0.78rem;color:var(--text-light)">{{ profile.total_stamps_earned }} total stamps earned</p>
+      <a href="{% url 'menu:list' %}" class="btn btn-sm btn-primary">Order to Earn</a>
+    </div>
+  </div>
+
+  <!-- NEXT TIER PROGRESS -->
+  {% if next_tier %}
+  <div style="background:var(--cream-foam);border:1px solid var(--border);border-radius:var(--radius-md);padding:2rem;margin-bottom:1.5rem">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.75rem">
+      <div>
+        <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light);margin-bottom:0.25rem">Next Tier</p>
+        <p style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--espresso)">{{ next_tier.tier|title }} &mdash; {{ next_tier.remaining }} points to go</p>
+      </div>
+      <p style="font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--crema)">{{ next_tier.progress }}%</p>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" data-pct="{{ next_tier.progress }}" style="width:0%"></div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- TIER CARDS -->
+  <div style="margin-bottom:3rem">
+    <p class="section-eyebrow" style="margin-bottom:1.5rem">All Tiers</p>
+    <div class="grid-4">
+      {% for tier_key, perks in all_tier_perks.items %}
+      <div class="tier-card {% if profile.tier == tier_key %}active-tier{% endif %}">
+        <div class="tier-icon tier-{{ tier_key }}">
+          {% if tier_key == 'bronze' %}🥉{% elif tier_key == 'silver' %}🥈{% elif tier_key == 'gold' %}🥇{% else %}💎{% endif %}
+        </div>
+        <p class="tier-name">
+          {% if tier_key == 'bronze' %}Bronze Brewer{% elif tier_key == 'silver' %}Silver Ritualist{% elif tier_key == 'gold' %}Gold Alchemist{% else %}Platinum Maestro{% endif %}
+        </p>
+        <p class="tier-threshold">
+          {% if tier_key == 'bronze' %}0+ pts{% elif tier_key == 'silver' %}100+ pts{% elif tier_key == 'gold' %}300+ pts{% else %}700+ pts{% endif %}
+        </p>
+        <ul class="tier-perks">
+          {% for perk in perks %}<li>{{ perk }}</li>{% endfor %}
+        </ul>
+        {% if profile.tier == tier_key %}<p style="margin-top:1rem;font-family:'DM Mono',monospace;font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--crema)">Current Tier</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- TRANSACTION HISTORY -->
+  {% if transactions %}
+  <div style="background:var(--cream-foam);border:1px solid var(--border);border-radius:var(--radius-md);padding:2rem">
+    <p style="font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--espresso);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">Recent Activity</p>
+    {% for txn in transactions %}
+    <div class="txn-row">
+      <div class="txn-icon">
+        {% if txn.transaction_type == 'earn_stamp' %}☕{% elif txn.transaction_type == 'earn_order' %}⭐{% elif txn.transaction_type == 'welcome' %}🎉{% elif txn.transaction_type == 'redeem_drink' %}🎁{% else %}✨{% endif %}
+      </div>
+      <div style="flex:1">
+        <p class="txn-desc">{{ txn.description }}</p>
+        <p class="txn-date">{{ txn.created_at|date:"M j, Y" }}</p>
+      </div>
+      {% if txn.points %}
+      <p class="txn-pts {% if txn.points > 0 %}earn{% else %}redeem{% endif %}">
+        {% if txn.points > 0 %}+{% endif %}{{ txn.points }} pts
+      </p>
+      {% endif %}
+      {% if txn.stamps %}
+      <p class="txn-pts earn">+{{ txn.stamps }} stamp</p>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

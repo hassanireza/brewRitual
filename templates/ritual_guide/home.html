@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}The Ritual Guide - Brew Ritual{% endblock %}
+{% block content %}
+<div class="ritual-hero">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 40% 60%,rgba(200,149,74,0.1) 0%,transparent 60%);pointer-events:none"></div>
+  <div style="position:relative;z-index:2;text-align:center;max-width:680px">
+    <p class="section-eyebrow" style="display:block;margin-bottom:1rem">The Ritual Guide</p>
+    <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2.5rem,5vw,4rem);color:var(--parchment);margin-bottom:1.25rem;line-height:1.1">Master the craft behind every cup.</h1>
+    <p style="font-size:1.05rem;color:var(--milk);opacity:0.75;line-height:1.8;max-width:520px;margin:0 auto 2.5rem;font-weight:300">Six brewing methods. Twenty-two recipes. Explore the science, technique, and story behind every style of coffee we serve.</p>
+    <p style="font-family:'DM Mono',monospace;font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--milk);opacity:0.45">Select a brewing method below to begin</p>
+  </div>
+</div>
+
+<div class="ritual-machines-section" id="machines">
+  <div class="ritual-machines-inner">
+    <p class="section-eyebrow" style="text-align:center;display:block;margin-bottom:0.5rem">Brewing Methods</p>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--parchment);text-align:center;margin-bottom:0.5rem">Choose Your Instrument</h2>
+    <p style="text-align:center;color:var(--milk);opacity:0.6;font-size:0.9rem;margin-bottom:0">Each method produces a fundamentally different cup. The same bean, transformed by process.</p>
+    <div class="machines-grid" id="machinesGrid">
+      {% for machine in machines %}
+      <div class="machine-card" data-machine="{{ machine.id }}" id="machine-{{ machine.id }}" onclick="selectMachine('{{ machine.id }}')">
+        {% if machine.id == 'espresso' %}
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none"><rect x="8" y="20" width="36" height="22" rx="3" fill="#C8954A" opacity="0.2"/><rect x="10" y="22" width="32" height="18" rx="2" fill="#C8954A" opacity="0.35"/><path d="M20 40 L22 46 Q22 47 23 47 L29 47 Q30 47 30 46 L32 40 Z" fill="#E8C17A" opacity="0.7"/><circle cx="26" cy="31" r="5" fill="#C8954A" opacity="0.5"/><circle cx="26" cy="31" r="2" fill="#C8954A"/><path d="M34 26 Q40 26 40 31 Q40 36 34 35" stroke="#C8954A" stroke-width="1.8" fill="none" stroke-linecap="round"/><rect x="14" y="18" width="24" height="5" rx="2" fill="#E8C17A" opacity="0.4"/><path d="M18 15 Q19 11 18 7" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="steam-path" opacity="0.6"/><path d="M26 16 Q27 12 26 8" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="steam-path" style="animation-delay:.35s" opacity="0.6"/><path d="M34 15 Q35 11 34 7" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="steam-path" style="animation-delay:.7s" opacity="0.6"/></svg>
+        {% elif machine.id == 'pour_over' %}
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none"><path d="M14 14 L26 38 L38 14 Z" fill="none" stroke="#C8954A" stroke-width="1.8"/><path d="M20 14 L26 38 L32 14" fill="#C8954A" opacity="0.15"/><rect x="20" y="38" width="12" height="4" rx="1" fill="#E8C17A" opacity="0.5"/><ellipse cx="26" cy="46" rx="10" ry="3" fill="#C8954A" opacity="0.2"/><path d="M10 14 L42 14" stroke="#EDD9B8" stroke-width="1.5" opacity="0.4"/><circle cx="26" cy="28" r="3" fill="#C8954A" opacity="0.5"/></svg>
+        {% elif machine.id == 'french_press' %}
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none"><rect x="14" y="14" width="24" height="28" rx="3" fill="none" stroke="#C8954A" stroke-width="1.8"/><rect x="16" y="16" width="20" height="24" rx="2" fill="#C8954A" opacity="0.12"/><path d="M18 30 L34 30" stroke="#C8954A" stroke-width="2" stroke-linecap="round"/><circle cx="26" cy="30" r="3" fill="#C8954A" opacity="0.4"/><path d="M24 14 L24 10 L28 10 L28 14" stroke="#EDD9B8" stroke-width="1.5" fill="none" opacity="0.5"/><rect x="12" y="40" width="28" height="3" rx="1.5" fill="#E8C17A" opacity="0.4"/></svg>
+        {% elif machine.id == 'aeropress' %}
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none"><rect x="18" y="8" width="16" height="36" rx="4" fill="none" stroke="#C8954A" stroke-width="1.8"/><rect x="20" y="10" width="12" height="22" rx="2" fill="#C8954A" opacity="0.15"/><path d="M20 32 L32 32" stroke="#C8954A" stroke-width="2" stroke-linecap="round"/><path d="M22 8 L22 5" stroke="#EDD9B8" stroke-width="1.2" opacity="0.5"/><path d="M26 8 L26 4" stroke="#EDD9B8" stroke-width="1.2" opacity="0.5"/><path d="M30 8 L30 5" stroke="#EDD9B8" stroke-width="1.2" opacity="0.5"/><rect x="16" y="42" width="20" height="3" rx="1.5" fill="#E8C17A" opacity="0.4"/></svg>
+        {% elif machine.id == 'moka' %}
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none"><path d="M20 30 L18 44 Q18 46 20 46 L32 46 Q34 46 34 44 L32 30 Z" fill="#C8954A" opacity="0.25"/><path d="M22 20 L30 20 L32 30 L20 30 Z" fill="#C8954A" opacity="0.4"/><ellipse cx="26" cy="20" rx="7" ry="3" fill="#E8C17A" opacity="0.5"/><path d="M26 10 Q30 10 30 14 Q30 18 26 18" stroke="#C8954A" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M23 8 Q24 4 23 1" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="steam-path" opacity="0.6"/><path d="M28 8 Q29 4 28 1" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="steam-path" style="animation-delay:.4s" opacity="0.6"/></svg>
+        {% else %}
+        <svg width="52" height="52" viewBox="0 0 52 52" fill="none"><rect x="16" y="10" width="20" height="32" rx="4" fill="none" stroke="#C8954A" stroke-width="1.8"/><path d="M18 26 L34 26" stroke="#C8954A" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.6"/><circle cx="26" cy="18" r="4" fill="#C8954A" opacity="0.3"/><path d="M24 40 L28 40 L28 44 L24 44 Z" fill="#E8C17A" opacity="0.4"/></svg>
+        {% endif %}
+        <p class="machine-name">{{ machine.name }}</p>
+        <p class="machine-desc-text">{{ machine.grind }} grind, {{ machine.temp }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="ritual-explorer-section" id="coffeeTabsWrap" style="display:none">
+  <div class="ritual-explorer-inner">
+    <p class="section-eyebrow" style="margin-bottom:0.5rem">Recipe Explorer</p>
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--espresso);margin-bottom:1.5rem">Select a Drink</h2>
+    <div class="coffee-tabs" id="coffeeTabs"></div>
+    <div class="ritual-recipe-display" id="recipeDisplay">
+      <div id="recipeInfo"></div>
+      <div class="glass-panel" id="glassPanel" style="display:none">
+        <div id="glassWrap"></div>
+        <p class="glass-label">Drink Composition</p>
+        <div id="ingredientsLegend" class="ingredients-legend"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+window.RITUAL_DATA = {
+  machines: {{ machines|safe|default:"[]" }},
+  recipes: {
+    espresso: {name:"Espresso",machine:["Espresso Machine"],origin:"Italy, 1930s",desc:"The foundation of the coffee world. 25-30ml of concentrated liquid built from 9 bars of pressure and around 25 seconds of extraction. Rich, intense, topped with golden crema.",volume:"30ml",time:"25s",temp:"93C",grind:"Fine",hasSaucer:true,steps:["Grind 18-20g of coffee to a fine, even consistency.","Distribute evenly in the portafilter basket and tamp with 20kg pressure.","Lock portafilter into group head. Begin extraction immediately.","Extract for 25-30 seconds targeting 30ml yield.","Serve immediately in a pre-warmed demitasse."],layers:[{name:"Espresso",pct:85,color:"#3D1F0A",colorSwatch:"#3D1F0A"},{name:"Crema",pct:15,color:"#C8954A",colorSwatch:"#C8954A"}]},
+    doppio: {name:"Doppio",machine:["Espresso Machine"],origin:"Italy",desc:"A double shot of espresso using 18-21g of ground coffee to produce 50-60ml. More volume, same intensity. The barista's own measure of preference.",volume:"60ml",time:"28s",temp:"93C",grind:"Fine",hasSaucer:true,steps:["Grind 18-21g fine.","Distribute and tamp at 20kg.","Extract double shot over 28 seconds.","Stop at 60ml. Serve immediately."],layers:[{name:"Espresso",pct:88,color:"#3D1F0A",colorSwatch:"#3D1F0A"},{name:"Crema",pct:12,color:"#C8954A",colorSwatch:"#C8954A"}]},
+    cappuccino: {name:"Cappuccino",machine:["Espresso Machine"],origin:"Vienna/Italy",desc:"Equal thirds of espresso, steamed milk, and dense milk foam. Traditionally small at 150-180ml, with a thick cap of microfoam that holds a latte art pattern.",volume:"150ml",time:"5min",temp:"65C",grind:"Fine",hasSaucer:true,steps:["Pull a single or double espresso into a pre-warmed cup.","Steam cold milk to 65C, creating dense microfoam.","Pour steamed milk from low, then raise the jug to fold foam on top.","The drink should be equal thirds espresso, milk, foam."],layers:[{name:"Espresso",pct:33,color:"#3D1F0A",colorSwatch:"#3D1F0A"},{name:"Steamed Milk",pct:34,color:"#E8C17A",colorSwatch:"#E8C17A"},{name:"Milk Foam",pct:33,color:"#F8F0DC",colorSwatch:"#F8F0DC"}]},
+    latte: {name:"Latte",machine:["Espresso Machine"],origin:"Italy/USA",desc:"A double espresso with velvety steamed milk poured to 240-360ml. The canvas for latte art, and the most forgiving espresso drink for textured milk technique.",volume:"300ml",time:"5min",temp:"65C",grind:"Fine",hasSaucer:false,steps:["Pull a double espresso into a 360ml cup or glass.","Steam 220ml of cold milk to 65C with a fine, silky microfoam.","Pour from low angle, bringing jug close to create latte art.","Total volume 280-320ml with a thin layer of foam on top."],layers:[{name:"Espresso",pct:20,color:"#3D1F0A",colorSwatch:"#3D1F0A"},{name:"Steamed Milk",pct:72,color:"#E8C17A",colorSwatch:"#E8C17A"},{name:"Foam",pct:8,color:"#F8F0DC",colorSwatch:"#F8F0DC"}]},
+    flat_white: {name:"Flat White",machine:["Espresso Machine"],origin:"Australia/NZ",desc:"A ristretto-based drink with a higher coffee-to-milk ratio than a latte. Dense, silky microfoam poured to 160ml. Small but forceful.",volume:"160ml",time:"5min",temp:"63C",grind:"Fine",hasSaucer:true,steps:["Pull a ristretto double shot (18g in, 36ml out, 20 seconds).","Steam 120ml whole milk to 63C with very fine microfoam.","Pour tight and close creating a deliberate dot or tulip."],layers:[{name:"Ristretto",pct:30,color:"#2A1208",colorSwatch:"#2A1208"},{name:"Silky Milk",pct:65,color:"#D4A44C",colorSwatch:"#D4A44C"},{name:"Micro Foam",pct:5,color:"#F0E4C4",colorSwatch:"#F0E4C4"}]},
+    pour_over: {name:"Pour Over",machine:["Pour Over"],origin:"Germany, 1908",desc:"A controlled, meditative brew. Hot water poured slowly and deliberately over a bed of ground coffee, letting gravity and time reveal every nuance of the bean.",volume:"300ml",time:"4min",temp:"94C",grind:"Medium",hasSaucer:false,steps:["Rinse filter paper with hot water and discard rinse water.","Add 20g of medium-ground coffee to the dripper.","Bloom: pour 40ml of 94C water and wait 30 seconds.","Pour remaining 260ml in slow concentric circles over 3 minutes.","Total brew time 3.5-4 minutes."],layers:[{name:"Coffee",pct:100,color:"#5C3018",colorSwatch:"#5C3018"}]},
+    french_press: {name:"French Press",machine:["French Press"],origin:"France, 1929",desc:"Full immersion. Coarsely ground coffee steeped in near-boiling water, then separated with a metal plunger filter. No paper means more oils, more body, more character.",volume:"350ml",time:"4min",temp:"95C",grind:"Coarse",hasSaucer:false,steps:["Add 30g of coarse-ground coffee to the press.","Pour 500ml of 95C water over the grounds.","Stir gently, place lid on (plunger up). Wait 4 minutes.","Press plunger slowly over 20-30 seconds.","Decant immediately into a mug to halt extraction."],layers:[{name:"Coffee",pct:95,color:"#4A2510",colorSwatch:"#4A2510"},{name:"Oils",pct:5,color:"#8C5E2A",colorSwatch:"#8C5E2A"}]},
+    cold_brew_straight: {name:"Cold Brew",machine:["Cold Brew Tower"],origin:"Japan, 17th Century",desc:"12-24 hours of cold water slowly percolating through coarsely ground coffee. Low acid, high smoothness, a completely different compound profile from hot brewing.",volume:"250ml",time:"18hr",temp:"4C",grind:"Extra Coarse",hasSaucer:false,steps:["Grind 100g of coffee extra coarsely.","Combine with 800ml of cold filtered water in a jar.","Stir, seal, and refrigerate for 18-24 hours.","Filter through a cheesecloth or paper filter.","Serve over ice, optionally dilute 1:1 with water."],layers:[{name:"Concentrate",pct:60,color:"#2A1208",colorSwatch:"#2A1208"},{name:"Water/Ice",pct:40,color:"#8BA8BE",colorSwatch:"#8BA8BE"}]},
+    aeropress_espresso: {name:"AeroPress Espresso",machine:["AeroPress"],origin:"USA, 2005",desc:"The AeroPress used inverted with high coffee-to-water ratio to simulate a concentrated espresso-style shot. Forgiving, portable, and surprisingly nuanced.",volume:"60ml",time:"2min",temp:"85C",grind:"Fine-Medium",hasSaucer:false,steps:["Add 18g of fine-medium ground coffee to inverted AeroPress.","Pour 60ml of 85C water and stir 10 seconds.","Attach pre-rinsed filter cap, flip onto cup.","Press smoothly over 20-30 seconds.","Serve as-is or top with hot water for an Americano style."],layers:[{name:"Coffee",pct:85,color:"#3D1F0A",colorSwatch:"#3D1F0A"},{name:"Crema",pct:15,color:"#A07040",colorSwatch:"#A07040"}]},
+    americano: {name:"Americano",machine:["Espresso Machine"],origin:"WWII Europe",desc:"A double espresso extended with hot water to filter coffee strength. The water goes first, then espresso on top to preserve the crema. 120-180ml total.",volume:"150ml",time:"3min",temp:"93C",grind:"Fine",hasSaucer:false,steps:["Pull a double espresso into a 240ml cup.","Pour 120ml of near-boiling water directly over the espresso.","The crema will float on top, slightly broken by the water.","Serve without milk or with a small amount on the side."],layers:[{name:"Hot Water",pct:75,color:"#8BA8BE",colorSwatch:"#8BA8BE"},{name:"Espresso",pct:20,color:"#3D1F0A",colorSwatch:"#3D1F0A"},{name:"Crema",pct:5,color:"#C8954A",colorSwatch:"#C8954A"}]},
+    macchiato: {name:"Macchiato",machine:["Espresso Machine"],origin:"Italy",desc:"A single or double espresso marked with a small dollop of milk foam. Macchiato means stained. This drink corrects the bitterness without drowning the espresso.",volume:"40ml",time:"4min",temp:"93C",grind:"Fine",hasSaucer:true,steps:["Pull a single or double espresso.","Steam a small amount of milk to create dense foam.","Spoon one generous dollop of foam onto the espresso.","Serve immediately in a small cup."],layers:[{name:"Espresso",pct:80,color:"#3D1F0A",colorSwatch:"#3D1F0A"},{name:"Foam",pct:20,color:"#F8F0DC",colorSwatch:"#F8F0DC"}]},
+    cortado: {name:"Cortado",machine:["Espresso Machine"],origin:"Spain",desc:"Equal parts espresso and warm steamed milk. The milk cuts the espresso's acidity without adding substantial foam. Around 90-100ml. Clean, balanced, deliberate.",volume:"90ml",time:"4min",temp:"65C",grind:"Fine",hasSaucer:false,steps:["Pull a double espresso.","Steam 45ml of milk to 65C with minimal foam.","Pour milk directly over espresso in equal proportion.","No latte art necessary. Clean and simple."],layers:[{name:"Espresso",pct:50,color:"#3D1F0A",colorSwatch:"#3D1F0A"},{name:"Warm Milk",pct:50,color:"#D4A44C",colorSwatch:"#D4A44C"}]},
+    mocha: {name:"Mocha",machine:["Espresso Machine"],origin:"Yemen/Italy",desc:"Espresso, chocolate, and steamed milk. Named after the Yemeni port of Mocha, historically the world's most important coffee trading centre. Rich, indulgent, layered.",volume:"300ml",time:"6min",temp:"65C",grind:"Fine",hasSaucer:false,steps:["Add 15ml of high-quality chocolate syrup to the cup.","Pull a double espresso over the chocolate and stir.","Steam 200ml of milk to 65C.","Pour steamed milk over the coffee-chocolate base.","Optional: top with whipped cream and a dusting of cocoa."],layers:[{name:"Chocolate",pct:10,color:"#3D1208",colorSwatch:"#3D1208"},{name:"Espresso",pct:20,color:"#5C2010",colorSwatch:"#5C2010"},{name:"Steamed Milk",pct:65,color:"#D4A44C",colorSwatch:"#D4A44C"},{name:"Foam",pct:5,color:"#F0E4C4",colorSwatch:"#F0E4C4"}]},
+    lungo: {name:"Lungo",machine:["Espresso Machine"],origin:"Italy",desc:"A long espresso. Same grind, more water, longer extraction time. Around 90-110ml. Weaker in concentration but capturing different compounds not present in a short shot.",volume:"100ml",time:"40s",temp:"93C",grind:"Fine",hasSaucer:true,steps:["Prepare the portafilter as for espresso.","Extract for 40-50 seconds, allowing 90-110ml to flow.","Taste: a lungo is bitter but less intense than a ristretto.","Serve in a small glass or demitasse."],layers:[{name:"Coffee",pct:88,color:"#5C3018",colorSwatch:"#5C3018"},{name:"Crema",pct:12,color:"#A07040",colorSwatch:"#A07040"}]},
+    nitro_cold_brew: {name:"Nitro Cold Brew",machine:["Cold Brew Tower"],origin:"USA, 2013",desc:"Cold brew infused with nitrogen gas, creating a cascade of tiny bubbles that give it a creamy, stout-like texture and a naturally sweet, milky flavour without dairy.",volume:"330ml",time:"20hr",temp:"4C",grind:"Extra Coarse",hasSaucer:false,steps:["Prepare cold brew concentrate with a 1:5 coffee-to-water ratio.","Chill completely for 18-24 hours.","Charge a whipped cream dispenser with nitrogen cartridges.","Fill dispenser with cold brew and shake.","Dispense slowly into a tilted glass without ice."],layers:[{name:"Cold Brew",pct:70,color:"#2A1208",colorSwatch:"#2A1208"},{name:"Nitrogen Foam",pct:30,color:"#6A8A9E",colorSwatch:"#6A8A9E"}]},
+    moka_coffee: {name:"Moka Pot Coffee",machine:["Moka Pot"],origin:"Italy, 1933",desc:"The stovetop espresso. Steam pressure forces water through ground coffee producing a rich, bold concentrate with more body than drip but less pressure than espresso.",volume:"100ml",time:"8min",temp:"100C",grind:"Medium-Fine",hasSaucer:false,steps:["Fill the bottom chamber with hot water to the valve.","Insert filter basket and fill with 18g of medium-fine coffee.","Do not tamp. Level the grounds with a finger.","Assemble and place on low-medium heat.","Remove from heat when you hear a hissing, sputtering sound."],layers:[{name:"Coffee",pct:90,color:"#4A2510",colorSwatch:"#4A2510"},{name:"Crema",pct:10,color:"#8C5E2A",colorSwatch:"#8C5E2A"}]}
+  }
+};
+
+function selectMachine(id) {
+  document.querySelectorAll('.machine-card').forEach(c => c.classList.remove('active'));
+  const card = document.querySelector('[data-machine="'+id+'"]');
+  if (card) card.classList.add('active');
+  const wrap = document.getElementById('coffeeTabsWrap');
+  if (wrap) { wrap.style.display = 'block'; }
+  if (window.RITUAL_DATA) {
+    const machine = window.RITUAL_DATA.machines.find(m => m.id === id);
+    if (!machine) return;
+    const tabs = document.getElementById('coffeeTabs');
+    tabs.innerHTML = '';
+    machine.coffees.forEach((key, i) => {
+      const recipe = window.RITUAL_DATA.recipes[key];
+      if (!recipe) return;
+      const btn = document.createElement('button');
+      btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+      btn.textContent = recipe.name;
+      btn.onclick = () => {
+        tabs.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderRecipe(key);
+      };
+      tabs.appendChild(btn);
+    });
+    renderRecipe(machine.coffees[0]);
+    setTimeout(() => wrap.scrollIntoView({behavior:'smooth',block:'start'}), 100);
+  }
+}
+
+function renderRecipe(key) {
+  const ri = document.getElementById('recipeInfo');
+  const gw = document.getElementById('glassWrap');
+  const il = document.getElementById('ingredientsLegend');
+  const gp = document.getElementById('glassPanel');
+  const recipe = window.RITUAL_DATA.recipes[key];
+  if (!recipe || !ri) return;
+  if (gp) gp.style.display = 'flex';
+  ri.innerHTML = `
+    <span class="compat-badge"><span class="compat-dot"></span>${recipe.machine.join(', ')}</span>
+    <h2 class="detail-title">${recipe.name}</h2>
+    <p class="detail-tagline" style="font-family:'DM Mono',monospace;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--crema)">${recipe.origin}</p>
+    <p class="detail-desc">${recipe.desc}</p>
+    <div class="recipe-stats-row">
+      <div class="recipe-stat"><span class="recipe-stat-value">${recipe.volume}</span><span class="recipe-stat-label">Volume</span></div>
+      <div class="recipe-stat"><span class="recipe-stat-value">${recipe.time}</span><span class="recipe-stat-label">Brew Time</span></div>
+      <div class="recipe-stat"><span class="recipe-stat-value">${recipe.temp}</span><span class="recipe-stat-label">Temperature</span></div>
+      <div class="recipe-stat"><span class="recipe-stat-value">${recipe.grind}</span><span class="recipe-stat-label">Grind Size</span></div>
+    </div>
+    <p class="recipe-steps-label">Brewing Steps</p>
+    <ol class="recipe-steps-list">${recipe.steps.map((s,i) => `<li class="step-item" style="transition-delay:${i*0.08}s"><span class="step-num">${i+1}</span><span class="step-text">${s}</span></li>`).join('')}</ol>
+    <div style="margin-top:2rem"><a href="/menu/" class="btn btn-primary btn-sm">Order This Style</a></div>
+  `;
+  setTimeout(() => ri.querySelectorAll('.step-item').forEach(el => el.classList.add('vis')), 80);
+  if (gw) {
+    const W=200,H=280,gx=30,gy=30,gw2=140,gh=210;
+    let layers = recipe.layers;
+    let defs = `<defs><clipPath id="gc"><path d="M${gx+8},${gy} L${gx},${gy+gh} Q${gx},${gy+gh+8} ${gx+8},${gy+gh+8} L${gx+gw2-8},${gy+gh+8} Q${gx+gw2},${gy+gh+8} ${gx+gw2},${gy+gh} L${gx+gw2-8},${gy} Z"/></clipPath></defs>`;
+    let fills = '';
+    let cum = 0;
+    layers.slice().reverse().forEach(l => {
+      const fh = (l.pct/100)*gh;
+      const ys = gy+gh-cum/100*gh-fh;
+      fills += `<rect x="${gx}" y="${ys}" width="${gw2}" height="${fh+2}" fill="${l.color}" clip-path="url(#gc)"><animate attributeName="height" from="0" to="${fh+2}" dur="0.6s" begin="${cum*0.01}s" fill="freeze"/><animate attributeName="y" from="${gy+gh}" to="${ys}" dur="0.6s" begin="${cum*0.01}s" fill="freeze"/></rect>`;
+      cum += l.pct;
+    });
+    const glass = `<path d="M${gx+8},${gy} L${gx},${gy+gh} Q${gx},${gy+gh+8} ${gx+8},${gy+gh+8} L${gx+gw2-8},${gy+gh+8} Q${gx+gw2},${gy+gh+8} ${gx+gw2},${gy+gh} L${gx+gw2-8},${gy} Z" stroke="rgba(200,149,74,0.5)" stroke-width="1.5" fill="none"/>`;
+    const handle = recipe.hasSaucer ? `<ellipse cx="${W/2}" cy="${gy+gh+14}" rx="${gw2/2+8}" ry="5" fill="rgba(200,149,74,0.1)" stroke="rgba(200,149,74,0.25)" stroke-width="1"/>` : '';
+    gw.innerHTML = `<svg viewBox="0 0 ${W} ${H+20}" xmlns="http://www.w3.org/2000/svg" style="max-width:200px">${defs}${fills}${glass}${handle}</svg>`;
+  }
+  if (il) {
+    il.innerHTML = recipe.layers.map(l => `<div class="legend-item"><div class="legend-swatch" style="background:${l.colorSwatch}"></div><span class="legend-name">${l.name}</span><span class="legend-amount">${l.pct}%</span></div>`).join('');
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Brew Ritual - Every Cup, A Ceremony{% endblock %}</title>
+<meta name="description" content="{% block meta_desc %}Specialty coffee, crafted with intention. Order online, earn rewards, and deepen your coffee knowledge at Brew Ritual.{% endblock %}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/brew.css' %}">
+{% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+<!-- Linen texture overlay -->
+<div class="texture-overlay" aria-hidden="true"></div>
+
+<!-- Custom cursor -->
+<div id="brew-cursor-trail" aria-hidden="true"></div>
+<div id="brew-cursor" aria-hidden="true">
+  <svg id="brew-cursor-svg" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6 18 L8 27 Q8 29 10 29 L22 29 Q24 29 24 27 L26 18 Z" fill="#C8954A"/>
+    <path d="M5 17 Q5 16 6 16 L26 16 Q27 16 27 17 L27 18 L5 18 Z" fill="#E8C17A"/>
+    <ellipse cx="16" cy="30.5" rx="12" ry="1.5" fill="#C8954A" opacity="0.35"/>
+    <path d="M26 19.5 Q30 19.5 30 22.5 Q30 25.5 26 25" stroke="#C8954A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M12 13 Q13 9 12 5" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="cursor-steam"/>
+    <path d="M16 14 Q17 10 16 6" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="cursor-steam" style="animation-delay:.35s"/>
+    <path d="M20 13 Q21 9 20 5" stroke="#EDD9B8" stroke-width="1.2" fill="none" stroke-linecap="round" class="cursor-steam" style="animation-delay:.7s"/>
+  </svg>
+</div>
+<div id="brew-cursor-dot" aria-hidden="true"></div>
+
+<!-- NAVIGATION -->
+<nav class="nav" id="mainNav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand" aria-label="Brew Ritual Home">
+      <svg class="nav-icon" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 32 L14 46 Q14 48 16 48 L36 48 Q38 48 38 46 L42 32 Z" fill="#C8954A" opacity="0.9"/>
+        <path d="M8 30 Q8 28 10 28 L42 28 Q44 28 44 30 L44 32 L8 32 Z" fill="#E8C17A"/>
+        <ellipse cx="26" cy="50" rx="20" ry="2" fill="#C8954A" opacity="0.4"/>
+        <path d="M42 34 Q50 34 50 40 Q50 46 42 44" stroke="#C8954A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M20 22 Q22 16 20 10" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7" class="steam-path"/>
+        <path d="M26 24 Q28 18 26 12" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7" class="steam-path" style="animation-delay:.3s"/>
+        <path d="M32 22 Q34 16 32 10" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7" class="steam-path" style="animation-delay:.6s"/>
+        <ellipse cx="26" cy="30" rx="14" ry="2" fill="#1C0F0A" opacity="0.5"/>
+      </svg>
+      <span class="nav-brand-text">Brew <span>Ritual</span></span>
+    </a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <ul class="nav-links" id="navLinks" role="list">
+      <li><a href="/" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a></li>
+      <li><a href="{% url 'menu:list' %}" class="nav-link {% if 'menu' in request.path %}active{% endif %}">Menu</a></li>
+      <li><a href="{% url 'ritual:home' %}" class="nav-link {% if 'ritual' in request.path %}active{% endif %}">The Ritual</a></li>
+      {% if user.is_authenticated %}
+      <li><a href="{% url 'loyalty:dashboard' %}" class="nav-link {% if 'loyalty' in request.path %}active{% endif %}">
+        Rewards
+        {% if loyalty_tier %}
+        <span class="nav-tier-badge nav-tier-{{ loyalty_tier }}">{{ loyalty_tier|title }}</span>
+        {% endif %}
+      </a></li>
+      <li><a href="{% url 'accounts:profile' %}" class="nav-link {% if 'profile' in request.path %}active{% endif %}">Profile</a></li>
+      <li><a href="{% url 'accounts:logout' %}" class="nav-link">Sign Out</a></li>
+      {% else %}
+      <li><a href="{% url 'accounts:login' %}" class="nav-link">Sign In</a></li>
+      <li><a href="{% url 'accounts:register' %}" class="nav-btn-pill">Join the Ritual</a></li>
+      {% endif %}
+    </ul>
+
+    <a href="{% url 'orders:cart' %}" class="nav-cart" aria-label="Your cart, {{ cart_count }} items">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M16 10a4 4 0 01-8 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      {% if cart_count %}
+      <span class="nav-cart-count" aria-live="polite">{{ cart_count }}</span>
+      {% endif %}
+    </a>
+  </div>
+</nav>
+
+<!-- MESSAGES -->
+{% if messages %}
+<div class="messages-container" role="status" aria-live="polite">
+  {% for message in messages %}
+  <div class="message message-{{ message.tags }}" data-auto-dismiss>
+    <span class="message-text">{{ message }}</span>
+    <button class="message-close" aria-label="Dismiss">&times;</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- MAIN CONTENT -->
+<main id="main-content" tabindex="-1">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- FOOTER -->
+<footer class="footer" role="contentinfo">
+  <div class="footer-inner">
+    <div class="footer-brand-block">
+      <svg class="footer-icon" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 32 L14 46 Q14 48 16 48 L36 48 Q38 48 38 46 L42 32 Z" fill="#C8954A" opacity="0.9"/>
+        <path d="M8 30 Q8 28 10 28 L42 28 Q44 28 44 30 L44 32 L8 32 Z" fill="#E8C17A"/>
+        <path d="M42 34 Q50 34 50 40 Q50 46 42 44" stroke="#C8954A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <path d="M20 22 Q22 16 20 10" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.5" class="steam-path"/>
+        <path d="M26 24 Q28 18 26 12" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.5" class="steam-path" style="animation-delay:.3s"/>
+        <path d="M32 22 Q34 16 32 10" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.5" class="steam-path" style="animation-delay:.6s"/>
+      </svg>
+      <div>
+        <p class="footer-brand-name">Brew <span>Ritual</span></p>
+        <p class="footer-slogan">Every Cup, A Ceremony</p>
+      </div>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <div class="footer-col">
+        <p class="footer-col-title">Explore</p>
+        <a href="{% url 'menu:list' %}">Our Menu</a>
+        <a href="{% url 'ritual:home' %}">The Ritual Guide</a>
+        <a href="{% url 'loyalty:dashboard' %}">Rewards Program</a>
+      </div>
+      <div class="footer-col">
+        <p class="footer-col-title">Account</p>
+        {% if user.is_authenticated %}
+        <a href="{% url 'accounts:profile' %}">My Profile</a>
+        <a href="{% url 'orders:history' %}">Order History</a>
+        <a href="{% url 'accounts:logout' %}">Sign Out</a>
+        {% else %}
+        <a href="{% url 'accounts:login' %}">Sign In</a>
+        <a href="{% url 'accounts:register' %}">Create Account</a>
+        {% endif %}
+      </div>
+      <div class="footer-col">
+        <p class="footer-col-title">Craft</p>
+        <a href="{% url 'ritual:home' %}#espresso">Espresso Techniques</a>
+        <a href="{% url 'ritual:home' %}#pour_over">Pour Over Methods</a>
+        <a href="{% url 'ritual:home' %}#cold_brew">Cold Brew Science</a>
+      </div>
+    </nav>
+  </div>
+
+  <div class="footer-bottom">
+    <p class="footer-copy">Brew Ritual. Crafted with intention. &copy; 2025</p>
+    <p class="footer-note mono">Coffee is not a habit. It is a practice.</p>
+  </div>
+</footer>
+
+{% load static %}
+<script src="{% static 'js/brew.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

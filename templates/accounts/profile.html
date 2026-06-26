@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}My Profile - Brew Ritual{% endblock %}
+{% block content %}
+<div class="profile-page">
+  <div class="profile-header">
+    <div class="profile-avatar" style="position:relative;z-index:1">
+      {{ user.first_name|slice:":1"|upper|default:user.username|slice:":1"|upper }}
+    </div>
+    <div style="position:relative;z-index:1">
+      <p style="font-family:'DM Mono',monospace;font-size:0.68rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--crema);margin-bottom:0.3rem">{{ loyalty_profile.get_tier_display }}</p>
+      <h1 style="font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--parchment);margin-bottom:0.25rem">{{ user.get_full_name|default:user.username }}</h1>
+      <p style="font-size:0.85rem;color:var(--milk);opacity:0.6">{{ user.email }}</p>
+    </div>
+    <div style="margin-left:auto;position:relative;z-index:1;display:flex;gap:1rem">
+      <a href="{% url 'loyalty:dashboard' %}" class="btn btn-outline btn-sm" style="border-color:rgba(200,149,74,0.3);color:var(--milk)">Rewards</a>
+      <a href="{% url 'orders:history' %}" class="btn btn-outline btn-sm" style="border-color:rgba(200,149,74,0.3);color:var(--milk)">Orders</a>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem">
+    <div style="background:var(--cream-foam);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.5rem;text-align:center">
+      <p style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--crema);font-weight:600">{{ loyalty_profile.total_points }}</p>
+      <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light)">Total Points</p>
+    </div>
+    <div style="background:var(--cream-foam);border:1px solid var(--border);border-radius:var(--radius-md);padding:1.5rem;text-align:center">
+      <p style="font-family:'Playfair Display',serif;font-size:2rem;color:var(--crema);font-weight:600">{{ loyalty_profile.total_orders }}</p>
+      <p style="font-family:'DM Mono',monospace;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--text-light)">Orders Placed</p>
+    </div>
+  </div>
+  <div style="background:var(--cream-foam);border:1px solid var(--border);border-radius:var(--radius-md);padding:2rem">
+    <h2 style="font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--espresso);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)">Edit Profile</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="{{ user.email }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone</label>
+        <input type="text" name="phone" class="form-control" value="{{ user_profile.phone }}" placeholder="+44 ...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your Coffee Story</label>
+        <textarea name="bio" class="form-control" placeholder="What brings you to Brew Ritual? What's your go-to order?" rows="3">{{ user_profile.bio }}</textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

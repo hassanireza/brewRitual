@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Sign In - Brew Ritual{% endblock %}
+{% block body_class %}auth-page-body{% endblock %}
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card fade-up">
+    <div class="auth-brand">
+      <svg width="40" height="40" viewBox="0 0 52 52" fill="none" style="margin:0 auto 1rem"><path d="M10 32 L14 46 Q14 48 16 48 L36 48 Q38 48 38 46 L42 32 Z" fill="#C8954A" opacity="0.9"/><path d="M8 30 Q8 28 10 28 L42 28 Q44 28 44 30 L44 32 L8 32 Z" fill="#E8C17A"/><path d="M42 34 Q50 34 50 40 Q50 46 42 44" stroke="#C8954A" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M20 22 Q22 16 20 10" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.6" class="steam-path"/><path d="M26 24 Q28 18 26 12" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.6" class="steam-path" style="animation-delay:.3s"/><path d="M32 22 Q34 16 32 10" stroke="#EDD9B8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.6" class="steam-path" style="animation-delay:.6s"/></svg>
+      <h1 class="auth-title">Welcome back.</h1>
+      <p class="auth-subtitle">Your ritual awaits. Sign in to continue.</p>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label" style="color:rgba(245,237,216,0.55)" for="username">Username</label>
+        <input id="username" type="text" name="username" class="form-control dark-bg" placeholder="Your username" autofocus required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" style="color:rgba(245,237,216,0.55)" for="password">Password</label>
+        <input id="password" type="password" name="password" class="form-control dark-bg" placeholder="Your password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:0.5rem">Sign In</button>
+    </form>
+    <div class="auth-footer">
+      New to Brew Ritual? <a href="{% url 'accounts:register' %}">Join the community</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

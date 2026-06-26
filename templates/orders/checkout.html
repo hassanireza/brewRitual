@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Brew Ritual{% endblock %}
+{% block content %}
+<div class="checkout-page">
+  <p class="section-eyebrow">Almost There</p>
+  <h1 style="font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--espresso);margin-bottom:2rem">Review Your Order</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div class="checkout-card">
+      <h3>Order Items</h3>
+      {% for item in cart.items.all %}
+      <div class="order-summary-item">
+        <span>{{ item.menu_item.name }} ({{ item.get_size_display }}) x{{ item.quantity }}</span>
+        <span style="font-family:'DM Mono',monospace;font-weight:500">${{ item.get_subtotal }}</span>
+      </div>
+      {% endfor %}
+      <div class="order-summary-item" style="font-weight:600;border-top:2px solid var(--border);padding-top:1rem;margin-top:0.5rem">
+        <span style="font-family:'Playfair Display',serif;font-size:1.1rem">Total</span>
+        <span style="font-family:'Playfair Display',serif;font-size:1.1rem">${{ cart.get_total }}</span>
+      </div>
+    </div>
+    {% if user.is_authenticated and loyalty_free_drinks > 0 %}
+    <div class="loyalty-redeem-box">
+      <span class="loyalty-redeem-icon">🎁</span>
+      <div>
+        <p style="font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--espresso);margin-bottom:0.25rem">You have {{ loyalty_free_drinks }} free drink{{ loyalty_free_drinks|pluralize }}!</p>
+        <p style="font-size:0.82rem;color:var(--text-light);margin-bottom:0.75rem">Redeem one now and we'll discount the cheapest item in your order.</p>
+        <label style="display:flex;align-items:center;gap:0.75rem;cursor:none">
+          <input type="checkbox" name="use_free_drink" value="1" style="width:18px;height:18px;accent-color:var(--crema)">
+          <span style="font-size:0.875rem;color:var(--text-mid)">Apply free drink to this order</span>
+        </label>
+      </div>
+    </div>
+    {% endif %}
+    <div class="checkout-card">
+      <h3>Order Notes</h3>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="notes">Any special requests for the whole order?</label>
+        <textarea id="notes" name="notes" class="form-control" placeholder="e.g. Please have ready by noon, extra napkins..." rows="3"></textarea>
+      </div>
+    </div>
+    <div class="checkout-card" style="background:var(--espresso);border-color:var(--border-gold)">
+      <h3 style="color:var(--parchment)">Payment</h3>
+      <p style="font-size:0.875rem;color:var(--milk);opacity:0.75;margin-bottom:1.5rem">This is a demo checkout. No real payment is processed.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label" style="color:var(--milk);opacity:0.7">Card Number</label>
+          <input type="text" class="form-control dark-bg" placeholder="4242 4242 4242 4242" disabled>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label" style="color:var(--milk);opacity:0.7">Name on Card</label>
+          <input type="text" class="form-control dark-bg" placeholder="{{ user.get_full_name|default:user.username }}" disabled>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label" style="color:var(--milk);opacity:0.7">Expiry</label>
+          <input type="text" class="form-control dark-bg" placeholder="MM / YY" disabled>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="form-label" style="color:var(--milk);opacity:0.7">CVV</label>
+          <input type="text" class="form-control dark-bg" placeholder="•••" disabled>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap">
+      <button type="submit" class="btn btn-primary btn-lg">Place Order &mdash; ${{ cart.get_total }}</button>
+      <a href="{% url 'orders:cart' %}" class="btn btn-outline btn-lg">Back to Cart</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
